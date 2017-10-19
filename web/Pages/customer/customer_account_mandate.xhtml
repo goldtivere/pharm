@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:h="http://java.sun.com/jsf/html" 
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"> 
+
+
+    <h:body>
+
+        <h:form id="frmSearchCusDetails">
+
+            <p:panel id="cus_acct_panelX" 
+                     header="Search Customer - Mandate Panel" 
+                     style="margin-bottom: 50px;">
+
+                <p:messages id="xzy1" showSummary="true"/>
+                <h:panelGrid  id="xgridSearchCustomer" columns="2" style="margin-left: 100px;">
+
+                    <h:outputLabel value="Enter any part of Customer's name or Id:"/>
+                    <p:autoComplete id="_auto_cus_name" value="#{upload_mandate.query}" 
+                                    completeMethod="#{upload_mandate.complete}" 
+                                    queryDelay="100" >
+                        <p:ajax event="itemSelect" listener="#{upload_mandate.selectHandle}"
+                                update=":uploadImgForm:cus_acct_panel"/> 
+
+                    </p:autoComplete>
+
+
+                </h:panelGrid>
+            </p:panel>
+
+        </h:form>
+
+        <p:separator/>
+
+        <h:form id="uploadImgForm" enctype="multipart/form-data">
+
+
+            <p:panel id="cus_acct_panel" visible="#{upload_mandate.mandatePanel}" 
+                     header="Mandate Panel" 
+                     style="margin-bottom: 50px;">
+
+                <p:messages id="xzy" showSummary="true"/>
+
+                <h:panelGrid columns="2" columnClasses="right,left,right"
+                             style="font-size: 9px;" styleClass="grid">
+
+                    <p:outputLabel value="Title:"/>
+                    <p:outputLabel value="#{upload_mandate.titleX}"/>
+
+                    <p:outputLabel value="Full Name:"/>
+                    <p:outputLabel value="#{upload_mandate.fullname}"/>
+
+                    <p:outputLabel value="Date Of Birth:"/>
+                    <p:outputLabel value="#{upload_mandate.date_of_birth}"/>
+
+                    <p:outputLabel value="Date Opened:"/>
+                    <p:outputLabel value="#{upload_mandate.date_openedX}"/> 
+
+
+                </h:panelGrid>
+                <p:separator/>
+
+                <h:panelGrid columns="3" columnClasses="right,left,right"
+                             style="font-size: 10px;margin-bottom: 20px;" styleClass="grid">
+
+                    <h:outputText value="Type of ID:"/>
+                    <p:inputText id="image_id" disabled="true" required="true" 
+                                 requiredMessage="'Type of ID' is required"
+                                 value="#{upload_mandate.cus_number}"/>
+                    <p:message for="image_id"/>
+
+                    <h:outputText value="Narration:"/>
+                    <p:inputTextarea id="narration" required="true" 
+                                     requiredMessage="'Narration' is required"
+                                     value="#{upload_mandate.narration}" />
+                    <p:message for="narration"/>
+
+                    <h:outputText value="File To Upload:"/>                    
+                    <p:fileUpload id="image_gan_gan" allowTypes="*.jpeg;*.jpg;*.gif;"
+                                  required="true" mode="simple" auto="false" 
+                                  requiredMessage="'File To Upload' is required"
+                                  value="#{upload_mandate.fileX}"  /> 
+                    <p:message for="image_gan_gan"/>
+
+
+                </h:panelGrid>
+
+                <p:commandButton style="margin-left: 220px;" value="Submit" ajax="false"
+                                 update="cus_acct_panel,:frmSearchCusDetails:cus_acct_panelX"
+                                 actionListener="#{upload_mandate.commit}"/>
+
+            </p:panel>
+
+
+        </h:form>
+
+    </h:body>
+
+</html>

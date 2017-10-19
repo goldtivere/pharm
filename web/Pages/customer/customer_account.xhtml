@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:h="http://java.sun.com/jsf/html" 
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"> 
+
+    <h:body>
+
+        <h:form id="frmAdmstr01">
+
+
+            <h:panelGrid  id="xgridSearchCustomer" columns="2" style="margin-left: 100px;">
+
+                <h:outputLabel value="Enter any part, Customer's name or Id:"/>
+                <p:autoComplete id="_auto_cus_name" value="#{cus_account.query}" 
+                                completeMethod="#{cus_account.complete}" 
+                                queryDelay="100" >
+                    <p:ajax event="itemSelect" listener="#{cus_account.selectHandle}"
+                            update=":frmAcctCreation:cus_acct_panel"/> 
+
+                </p:autoComplete>
+
+
+            </h:panelGrid>
+
+        </h:form>
+        
+        <p:separator/>
+
+        <h:form id="frmAcctCreation">
+            
+            <p:panel  visible="#{cus_account.accountPanel}" style="width: 550px;position:absolute ; 
+                      top:125px;left: 10px;height: 450px;border-width: 0px; background-color: #E7E7E7" 
+                      id="cus_acct_panel">
+
+                <p:messages id="ixd" showSummary="true"/>
+ 
+
+                <h:panelGrid columns="2">
+
+                    <p:outputLabel value="Customer Number:"/>
+                    <p:outputLabel value="#{cus_account.customerNumber}"/>
+
+                    <p:outputLabel value="Type of Account:" for="ledger_type"/>
+
+
+                    <p:selectOneMenu id="ledger_type" style="width: 280px;"
+                                     value="#{cus_account.selectedAccountsChrtBean}" 
+                                     required="true" 
+                                     requiredMessage="'Ledger Type' is required">
+
+                        <f:selectItem itemLabel="--Select Ledger Type--" itemValue=""  
+                                      noSelectionOption="true"/>
+
+                        <f:selectItems value="#{branchaccount.listAccountsChrtBean}"  
+                                       var="lst_type"
+                                       itemLabel="#{lst_type.meaning}" 
+                                       itemValue="#{lst_type.ledcode}"/>  
+
+                    </p:selectOneMenu>
+
+
+                    <p:outputLabel value="Currency Type:" for="ledger_cur_type"/> 
+                    <p:selectOneMenu id="ledger_cur_type" style="width: 280px;"
+                                     value="#{cus_account.selectedCurrencyDescriptionXBean}" 
+                                     required="true" 
+                                     requiredMessage="'Currency Type' is required">
+
+                        <f:selectItem itemLabel="--Select Currency Type--" itemValue=""  
+                                      noSelectionOption="true"/>
+
+                        <f:selectItems value="#{branchaccount.listCurrencyDescriptionXBean}"  
+                                       var="lst_cur_type"
+                                       itemLabel="#{lst_cur_type.descx}" 
+                                       itemValue="#{lst_cur_type.id}"/>  
+
+                    </p:selectOneMenu>
+
+
+                </h:panelGrid>
+
+                <p:commandButton  id="xsubComment"  ajax="true"
+                                  actionListener="#{cus_account.createAccount}" 
+                                  value="Submit"    
+                                  update="cus_acct_panel"
+                                  style=" left: 2px;"/>
+ 
+                <p:separator/>
+
+
+                <p:dataTable  value="#{cus_account.listCustomerAccountObj}" var="datx" 
+                              paginator="true" rows="7">
+
+                    <p:column headerText="Account" styleClass="outputLabelTrxHistryDescAndNature">
+
+
+                        <h:outputText value="#{datx.fullaccount}"/>
+
+                    </p:column>
+
+                    <p:column headerText="Account Type" styleClass="outputLabelTrxHistryDescAndNature">
+
+
+
+                        <h:outputText value="#{datx.ACCT_TYPE_MEANING}"/>
+
+                    </p:column>
+
+                    <p:column headerText="Current Balance" styleClass="outputLabelTrxHistryDescAndNature">
+
+                        <h:outputText value="#{datx.STR_CRNT_BAL}"/>
+
+                    </p:column>
+
+                    <p:column headerText="Balance in words" styleClass="outputLabelTrxHistryDescAndNature">
+
+                        <h:outputText value="#{datx.balance_in_words}"/>
+
+                    </p:column>
+
+                    <p:column headerText="Account Status" styleClass="outputLabelTrxHistryDescAndNature">
+
+                        <h:outputText value="#{datx.STA_CODE_MEANING}"/>
+
+                    </p:column>
+
+                </p:dataTable>
+
+
+
+            </p:panel>
+        </h:form>
+
+    </h:body>
+
+</html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:h="http://java.sun.com/jsf/html" 
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"> 
+
+    <h:body>
+
+        <h:form id="frmSearchMandate">
+
+            <p:panel id="pnlSearchMandate">
+
+                <h:panelGrid columns="3">
+
+                    <p:outputLabel value="Enter Part of Customer Criteria"/>
+                    <p:autoComplete completeMethod="#{cust_mandate.complete}"
+                                    queryDelay="100"  
+                                    value="#{cust_mandate.query}" style="width: 200px;">
+
+                        <p:ajax listener="#{cust_mandate.selectHandle}" 
+                                event="itemSelect"
+                                update=":frmResultMandate:pnlResultMandate"/>
+
+                    </p:autoComplete>
+
+                </h:panelGrid>
+
+            </p:panel>
+
+        </h:form>
+
+
+        <p:separator/>
+
+        <h:form id="frmResultMandate">
+
+            <p:panel id="pnlResultMandate">
+
+                <h:panelGrid columns="2">
+
+                    <p:outputLabel value="Full name:"/>
+                    <p:outputLabel value="#{cust_mandate.fullname}" style="margin-bottom: 40px;"/>
+
+                    <p:outputLabel value=""/>
+                    <p:fileUpload  value="#{cust_mandate.file}"
+                                  fileUploadListener="#{cust_mandate.handleFileUpload}" 
+                                  mode="advanced" dragDropSupport="false"
+                                  update="messages" sizeLimit="100000" fileLimit="3" 
+                                  allowTypes="/(\.|\/)(gif|jpe?g|png)$/" />
+
+                    <p:growl id="messages" showDetail="true" />
+                    
+                    <p:outputLabel value=""/>
+                    <p:commandButton value="Upload"/>
+
+                </h:panelGrid>
+
+
+            </p:panel>
+
+        </h:form>
+
+
+    </h:body>
+
+</html>

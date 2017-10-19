@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:h="http://java.sun.com/jsf/html" 
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"> 
+
+    <h:body>
+
+
+        <h:form id="frmAdmstr01">
+
+            <p:panel id="panel4Tbl">
+                
+                <p:dataTable id="pend_id" value="#{p_appv.lstOfPending}" 
+                             var="pending" rows="5" paginator="true">
+
+                    <f:facet name="header">
+                        <p:commandButton value="Refresh" ajax="false" actionListener="#{p_appv.refresh}"/>
+                    </f:facet>
+
+                    <p:column style="width: 50px;">
+
+                        <f:facet name="header">
+                            <h:outputText value="Bra. Code"/>
+                        </f:facet>
+
+                        <h:outputText value="#{pending.bra_code}"/>
+
+                    </p:column>
+
+                    <p:column style="width: 50px;">
+
+                        <f:facet name="header">
+                            <h:outputText value="Cus. Num"/>
+                        </f:facet>
+
+                        <h:outputText value="#{pending.cus_num}"/>
+
+                    </p:column>
+
+                    <p:column style="width: 50px;">
+
+                        <f:facet name="header">
+                            <h:outputText value="Cur. Code"/>
+                        </f:facet>
+
+                        <h:outputText value="#{pending.cur_code}"/>
+
+                    </p:column>
+
+                    <p:column style="width: 50px;">
+
+                        <f:facet name="header">
+                            <h:outputText value="Led. Code"/>
+                        </f:facet>
+
+                        <h:outputText value="#{pending.led_code}"/>
+
+                    </p:column>
+
+                    <p:column style="width: 50px;">
+
+                        <f:facet name="header">
+                            <h:outputText value="Sub. Acct. Code"/>
+                        </f:facet>
+
+                        <h:outputText value="#{pending.sub_acct_code}"/>
+
+                    </p:column>
+                    <p:column style="width: 150px;">
+
+                        <f:facet name="header">
+                            <h:outputText value="Customer Name"/>
+                        </f:facet>
+
+                        <h:outputText value="#{pending.cus_sho_name}"/>
+
+                    </p:column>
+
+                    <p:column style="width: 30px;">
+
+                        <p:commandButton icon="ui-icon-search" id="xmeDelItemBtn"
+                                         actionListener="#{p_appv.view(pending)}"
+                                         update=":frmViewPending:view_selected_pending"  />
+
+                    </p:column>
+
+
+                </p:dataTable>
+            </p:panel>
+
+        </h:form>
+
+        <p:separator/>
+
+
+        <h:form id="frmViewPending">
+
+            <p:panel id="view_selected_pending">
+
+                <h:panelGrid columns="2">
+
+                    <p:outputLabel value="Customer Name:"/>
+                    <p:outputLabel value="#{p_appv.cus_sho_name}"/>
+
+                    <p:outputLabel value="Date Opened:"/>
+                    <p:outputLabel value="#{p_appv.date_open}"/>
+
+                    <p:outputLabel value="Contact Address:"/>
+                    <p:outputLabel value="#{p_appv.cus_sho_name}"/>
+
+                    <p:outputLabel value="Parmanent Address:"/>
+                    <p:outputLabel value="#{p_appv.paddress}"/>
+
+                </h:panelGrid>
+                <p:separator style="border-width: 2px;border-color: blue;"/>
+
+                <p:scrollPanel id="xtScrolX1" style="width: 710px;  
+                               height: 200px; border-color: #fff">
+
+
+                    
+                </p:scrollPanel>
+
+
+            </p:panel>
+
+        </h:form>
+
+        <h:form id="frmAppRej">
+
+            <p:panel header="Approval - Template">
+
+                <h:panelGrid columns="2">
+
+                    <p:outputLabel value="Approve or Reject"/>
+                    <p:selectOneMenu id="descionX" value="#{p_appv.action_type}">
+
+                        <f:selectItem itemLabel="--Select---" itemValue="" noSelectionOption="true"/>
+                        <f:selectItem itemLabel="Approve" itemValue="Approve"/>
+                        <f:selectItem itemLabel="Reject" itemValue="Reject"/> 
+
+                    </p:selectOneMenu>
+ 
+
+                </h:panelGrid>
+
+                <p:commandButton value="Submit" 
+                                 actionListener="#{p_appv.save}" 
+                                 update=":frmAdmstr01:panel4Tbl" ajax="true"/>
+
+            </p:panel>
+
+        </h:form>
+
+    </h:body>
+
+</html>

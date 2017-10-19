@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:h="http://java.sun.com/jsf/html" 
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui"> 
+
+    
+    <h:body>
+
+        <h:form id="frmCustomerForm" enctype="multipart/form-data">
+
+
+            <p:wizard id="wizContainer">
+
+                <p:tab  id="personal" title="Personal Data"> 
+                    <p:messages/>
+                    <p:panel>
+
+                        <h:panelGrid columns="2">
+
+                            <p:outputLabel value="Title:" for="p_title"/>
+                            <p:selectOneMenu id="p_title" required="true" 
+                                             value="#{customer.selectedTitle}" 
+                                             label="Title:" >
+
+                                <f:selectItem itemLabel="--Select Title--" itemValue="" 
+                                              noSelectionOption="true"/>
+                                <f:selectItems value="#{customer.title}" var="dtitle"
+                                               itemLabel="#{dtitle.meaning}"
+                                               itemValue="#{dtitle.meaning}"/> 
+
+                            </p:selectOneMenu> 
+
+                            <p:outputLabel value="First Name:" for="p_fname"/>
+                            <p:inputText id="p_fname" required="true"
+                                         value="#{customer.fname}" label="First Name"/> 
+
+                            <p:outputLabel value="Middle Name:" for="p_mname"/>
+                            <p:inputText id="p_mname" required="true" 
+                                         value="#{customer.mname}" label="Middle Name"/> 
+
+                            <p:outputLabel value="Last Name:" for="p_lname"/>
+                            <p:inputText id="p_lname" required="true" 
+                                         value="#{customer.lname}" label="Last Name"/> 
+
+                            <p:outputLabel value="Gender:" for="p_gender"/>
+                            <p:selectOneMenu id="p_gender" required="true" 
+                                             value="#{customer.gender}" label="Gender" >
+
+                                <f:selectItem itemLabel="--Select Gender--" itemValue="" noSelectionOption=""/>
+                                <f:selectItem itemLabel="Male" itemValue="Male"/>
+                                <f:selectItem itemLabel="Female" itemValue="Female"/>
+
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Date of Birth:" for="p_dob"/>
+                            <p:calendar id="p_dob" value="#{customer.dob}" 
+                                        required="true" 
+                                        label="Date of Birth"/> 
+
+                        </h:panelGrid>
+
+                    </p:panel> 
+
+                </p:tab>
+
+                <p:tab id="contact" title="Contact">
+
+                    <p:messages/>
+                    <p:panel>
+
+                        <h:panelGrid columns="2">
+
+                            <p:outputLabel value="GSM:" for="p_gsm"/>
+                            <p:inputText id="p_gsm" required="true" 
+                                         value="#{customer.gsm}" label="GMS:" />
+
+                            <p:outputLabel value="Email" for="p_email"/>
+                            <p:inputText id="p_email" required="true" 
+                                         value="#{customer.email}" label="Email" />
+
+                            <p:outputLabel value="Contact Address:" for="p_caddress"/>
+                            <p:inputTextarea id="p_caddress" rows="3" required="true" 
+                                             value="#{customer.contact_address}" label="Address" />
+
+                            <p:outputLabel value="Permanent Address" for="p_paddress"/>
+                            <p:inputTextarea id="p_paddress" rows="3" required="true" 
+                                             value="#{customer.permanent_address}" label="Permanent Address" />
+
+
+                        </h:panelGrid>
+
+                    </p:panel>
+
+                </p:tab>
+
+                <p:tab id="next_of_kin" title="Next of Kin">
+
+                    <p:messages/>
+                    <p:panel>
+
+                        <h:panelGrid columns="2">
+
+                            <p:outputLabel value="Full Name:" for="p_nx_fname"/>
+                            <p:inputText id="p_nx_fname" value="#{customer.nx_full_name}"
+                                         required="true" label="Full Name"/> 
+
+                            <p:outputLabel value="Relationship:" for="p_relationship"/>
+                            <p:selectOneMenu id="p_relationship" required="true" 
+                                             value="#{customer.nx_relationship}" 
+                                             label="Relationship" >
+
+                                <f:selectItem itemLabel="--Select Relatinship--" 
+                                              itemValue="" noSelectionOption=""/>
+
+                                <f:selectItems var="x_relatnx" value="#{customer.pickRelate}"
+                                               itemLabel="#{x_relatnx.value}"
+                                               itemValue="#{x_relatnx.id}"
+                                               />
+
+                            </p:selectOneMenu>
+
+                            <p:outputLabel value="Email" for="p_nx_email"/>
+                            <p:inputText id="p_nx_email" required="true" 
+                                         value="#{customer.nx_email}" label="Email" />
+
+                            <p:outputLabel value="GSM" for="p_nx_gsm"/>
+                            <p:inputText id="p_nx_gsm" required="true" 
+                                         value="#{customer.nx_gsm}" label="GMS" />
+
+                            <p:outputLabel value="Contact Address:" for="p_nx_caddress"/>
+                            <p:inputTextarea id="p_nx_caddress" rows="3" required="true" 
+                                             value="#{customer.nx_contact_address}" 
+                                             label=" Contact Address" />
+
+                            <p:outputLabel value="Permanent Address" for="p_nx_paddress"/>
+                            <p:inputTextarea id="p_nx_paddress" rows="3" required="true" 
+                                             value="#{customer.nx_permanent_address}" 
+                                             label="Permanent Address" />
+
+
+                        </h:panelGrid>
+
+                    </p:panel> 
+
+
+                </p:tab>
+ 
+                <p:tab id="confirmation" title="Confirmation">
+
+                    <p:messages id="msg_commit"/>
+
+                    <p:panel>
+
+                        <h:panelGrid columns="2">
+
+                            <p:outputLabel value="Personal Data" style="background-color: antiquewhite"/>
+                            <p:outputLabel value=""/>
+
+                            <p:outputLabel value="Title:"/>
+                            <p:outputLabel value="#{customer.selectedTitle}"/>
+
+                            <p:outputLabel value="First Name:"/>
+                            <p:outputLabel value="#{customer.fname}"/>
+
+                            <p:outputLabel value="Middle Name:"/>
+                            <p:outputLabel value="#{customer.mname}"/>
+
+                            <p:outputLabel value="Last Name:"/>
+                            <p:outputLabel value="#{customer.lname}"/>
+
+                            <p:outputLabel value="Date of Birth:"/>
+                            <p:outputLabel value="#{customer.dob}"/>
+
+                            <p:outputLabel value="Gender:"/>
+                            <p:outputLabel value="#{customer.gender}"/>
+
+                            <p:outputLabel value="Contact" style="background-color: antiquewhite"/>
+                            <p:outputLabel value=""/>
+
+                            <p:outputLabel value="GSM:"/>
+                            <p:outputLabel value="#{customer.gsm}"/>
+
+                            <p:outputLabel value="Email"/>
+                            <p:outputLabel value="#{customer.email}" />
+
+                            <p:outputLabel value="Contact Address:"/>
+                            <p:outputLabel value="#{customer.contact_address}"/>
+
+                            <p:outputLabel value="Permanent Address"/>
+                            <p:outputLabel value="#{customer.permanent_address}"/>
+
+                            <p:outputLabel value="Next Of Kin" style="background-color: antiquewhite"/>
+                            <p:outputLabel value=""/>
+
+                            <p:outputLabel value="Full Name:"/>
+                            <p:outputLabel value="#{customer.nx_full_name}"/>
+
+                            <p:outputLabel value="Relationship:"/>
+                            <p:outputLabel value="#{customer.nx_relationship}" />
+
+                            <p:outputLabel value="Email:"/>
+                            <p:outputLabel value="#{customer.nx_email}" />
+ 
+                            <p:outputLabel value="Next of kin Contact Address:"/>
+                            <p:outputLabel value="#{customer.nx_contact_address}"/>
+
+                            <p:outputLabel value="Next of kin Permanent Address"/>
+                            <p:outputLabel value="#{customer.nx_permanent_address}"/>
+ 
+
+                        </h:panelGrid>
+
+                        <p:separator/>
+
+                        <p:commandButton value="Submit" ajax="false"
+                                         update=":frmCustomerForm:msg_commit,:frmCustomerForm:wizContainer"
+                                         actionListener="#{customer.commit}"/>
+
+                    </p:panel> 
+
+
+                </p:tab> 
+
+                <p/>
+
+                <p/>
+            </p:wizard>
+
+            <p:commandButton value="Refresh" ajax="false"
+                                         update=":frmCustomerForm:wizContainer"
+                                         actionListener="#{customer.refresh}"/>
+        </h:form>
+
+    </h:body>
+</html>

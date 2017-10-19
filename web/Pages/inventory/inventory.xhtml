@@ -1,0 +1,363 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:body>
+
+        <p:panel style="margin-left: 20px;">
+
+            <p:tabView>
+                <p:tab title="Register Vendor">
+                    <p:panel header="VENDOR REGISTRATION" style="height: 450px;" id="ven">
+
+
+                        <h:panelGrid columns="6">
+                            <p:outputLabel value="Vendor Name: " for="vname"/>
+                            <p:inputText id="vname" required="true" value="#{bank.vendor_name}" />
+                            <p:message for="vname"/>
+
+                            <p:outputLabel value="Vendor Bank: " for="bank"/>
+                            <p:selectOneMenu id="bank" value="#{bank.bankmode.bankName}" required="true" requiredMessage="Bank required">
+
+                                <f:selectItem itemLabel="--Select Bank--" itemValue="" noSelectionOption="true"/>
+                                <f:selectItems value="#{bank.bankmodel}"
+                                               var="singlevalue"  
+                                               itemLabel="#{singlevalue.bankName}"
+                                               itemValue="#{singlevalue.bankName}"/>
+                            </p:selectOneMenu>
+
+
+                            <p:message for="bank"/>
+
+                            <p:outputLabel value="Vendor Account Number: " for="anum"/>
+                            <p:inputText id="anum" required="true" value="#{bank.vendor_acct}" requiredMessage="Account Number required" />
+                            <p:message for="anum"/>
+
+                            <p:outputLabel value="Vendor Contact Address: " for="adress"/>
+                            <p:inputTextarea id="adress" required="true" value="#{bank.vendor_address}" requiredMessage="Contact Address required" />
+                            <p:message for="adress"/>
+
+                            <p:outputLabel value="Vendor Email Address: " for="email"/>
+                            <p:inputText id="email" required="true" label="email" size="40"
+                                         requiredMessage="Please enter your email address."
+                                         validatorMessage="Invalid email format"
+                                         value="#{bank.vendor_email}">
+
+                                <f:validateRegex
+                                    pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+
+                            </p:inputText>
+                            <p:message for="email" />
+
+                            <p:outputLabel value="Vendor Phone Number " for="pnum"/>
+                            <p:inputText id="pnum" required="true" value="#{bank.vendor_phone}" requiredMessage="Phone number required" />
+                            <p:message for="pnum"/>
+
+                            <p:commandButton value="save" process="@this vname,bank,anum,adress,email,pnum" update=":templateForm:growl,singleTB,ven" ajax="true" actionListener="#{bank.insertData}" />
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="1" id="an">  
+
+
+                            <p:outputPanel style="margin-left: 800px;">
+                                <h:outputText value="Search all fields:" />
+                                <p:inputText id="globalFilter" style="width:150px; margin-right: 10px;" placeholder="Enter keyword" />
+                                <p:commandButton value="Search"/>
+                            </p:outputPanel>
+
+                            <p:dataTable var="ven_tab" id="singleTB"
+                                         value="#{bank.vendorList}" 
+                                         rows="10"
+                                         editable="true"
+                                         paginatorTemplate="{CurrentPageReport}  
+                                         {FirstPageLink} {PreviousPageLink} 
+                                         {PageLinks} {NextPageLink} {LastPageLink} "
+                                         paginator="true" style="margin-bottom:20px"
+                                         rowsPerPageTemplate="5,10,15">
+
+                                <p:ajax event="rowEdit" listener="#{bank.onRowEdit}" update=":templateForm:growl" />
+                                <p:ajax event="rowEditCancel" listener="#{bank.onRowCancel}" update=":templateForm:growl" />
+                                <p:column>
+                                    <f:facet name="header">
+                                        <h:outputText value="Vendor Id"/>
+                                    </f:facet>
+
+                                    <h:outputText value="#{ven_tab.vendorId}"/>
+
+                                </p:column>
+
+                                <p:column>
+
+                                    <f:facet name="header">
+                                        <h:outputText value="Vendor Name"/>
+                                    </f:facet>
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{ven_tab.vendorName}"/></f:facet>
+                                        <f:facet name="input"><p:inputText value="#{ven_tab.vendorName}"  required="true"  requiredMessage="Name is required" style="width:96%"/></f:facet>
+                                    </p:cellEditor>
+
+
+                                </p:column>
+
+                                <p:column>
+
+                                    <f:facet name="header">
+                                        <h:outputText value="Vendor Phone Number"/>
+                                    </f:facet>
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{ven_tab.vendorPnum}"/></f:facet>
+                                        <f:facet name="input"><p:inputText value="#{ven_tab.vendorPnum}" required="true" requiredMessage="Phone is required" style="width:96%"/></f:facet>
+                                    </p:cellEditor>
+
+
+                                </p:column>
+
+                                <p:column>
+
+                                    <f:facet name="header">
+                                        <h:outputText value="Vendor Email"/>
+                                    </f:facet>
+
+                                    <p:cellEditor>
+                                        <f:facet name="output"><h:outputText value="#{ven_tab.vendorEmail}"/></f:facet>
+                                        <f:facet name="input"><p:inputText required="true" value="#{ven_tab.vendorEmail}" requiredMessage="Email is required" style="width:96%"/></f:facet>
+                                    </p:cellEditor>
+
+
+                                </p:column>
+                                <p:column>
+
+                                    <f:facet name="header">
+                                        <h:outputText value="Vendor Contact Address"/>
+                                    </f:facet>
+
+                                    <p:cellEditor>
+                                        <f:facet name="output"> <h:outputText value="#{ven_tab.vendorContact}"/></f:facet>
+                                        <f:facet name="input"><p:inputText required="true" value="#{ven_tab.vendorContact}" requiredMessage="Contact is required" style="width:96%"/></f:facet>
+                                    </p:cellEditor>
+
+
+                                </p:column>
+                                <p:column>
+
+                                    <f:facet name="header">
+                                        <h:outputText value="Vendor Bank"/>
+                                    </f:facet>
+
+                                    <p:cellEditor>
+                                        <f:facet name="output"> <h:outputText value="#{ven_tab.vendorBank}"/></f:facet>
+                                        <f:facet name="input">  
+                                            <p:selectOneMenu id="bank" style="width:100%" value="#{ven_tab.vendorBank}" required="true" requiredMessage="Bank required">
+
+                                                <f:selectItem itemLabel="--Select Bank--" itemValue="" noSelectionOption="true"/>
+                                                <f:selectItems value="#{bank.bankmodel}"
+                                                               var="singlevalue"  
+                                                               itemLabel="#{singlevalue.bankName}"
+                                                               itemValue="#{singlevalue.bankName}"/>
+                                            </p:selectOneMenu></f:facet>
+                                    </p:cellEditor>
+
+
+
+                                </p:column>
+                                <p:column>
+
+                                    <f:facet name="header">
+                                        <h:outputText value="Vendor Account Number"/>
+                                    </f:facet>
+
+                                    <p:cellEditor>
+                                        <f:facet name="output"> <h:outputText value="#{ven_tab.vendorAcct}"/></f:facet>
+                                        <f:facet name="input"><p:inputText required="true" value="#{ven_tab.vendorAcct}" requiredMessage="Account is required" style="width:96%"/></f:facet>
+                                    </p:cellEditor> 
+
+
+                                </p:column>
+                                <p:column style="width:32px">
+                                    <p:rowEditor   />
+                                </p:column>
+                            </p:dataTable> 
+                        </h:panelGrid>
+                    </p:panel> 
+                </p:tab>
+                <p:tab title="Register Item">
+                    <h:panelGrid columns="3">
+                        <p:outputLabel value="Item Name: " for="venName"/>
+                        <p:inputText id="venName" />
+                        <p:message for="venName"/>
+
+                        <p:outputLabel value="Category: " for="cgory"/>
+                        <p:autoComplete id="cgory" dropdown="true"  emptyMessage="no record found" required="true" requiredMessage="please eneter category" value="#{ivt.inventRole.inventory_name}" completeMethod="#{ivt.inventoryList()}" />
+                        <p:message for="cgory"/>
+
+                        <p:outputLabel value="Description: " for="des"/>
+                        <p:inputText id="des" />
+                        <p:message for="des"/>
+                    </h:panelGrid>
+                </p:tab>
+
+                <p:tab title="Add Item">
+                    <p:panel id="inventDetails" header="Inventory Details" style="margin-left: 20px; margin-top: 20px; height: 400px;" >
+                        <h:panelGrid columns="3" style="float: left;">
+                            <p:outputLabel value="Vendor ID: " for="vendor"/>
+                            <p:inputText id="vendor" />
+                            <p:message for="vendor"/>
+
+                            <p:outputLabel value="Item: " for="item"/>
+                            <p:inputText id="item" />
+                            <p:message for="item"/>
+
+                            <p:outputLabel value="Description: " for="describe"/>
+                            <p:inputText id="describe" />
+                            <p:message for="describe"/>
+
+                            <p:outputLabel value="invoice Id: " for="inId"/>
+                            <p:inputText id="inId" />
+                            <p:message for="inId"/>
+
+                            <p:outputLabel value="Amount: " for="amount"/>
+                            <p:inputText id="amount" />
+                            <p:message for="amount"/>
+
+                            <p:outputLabel value="Unit Price: " for="unit"/>
+                            <p:inputText id="unit" />
+                            <p:message for="unit"/>
+
+                            <p:outputLabel value="Quantity: " for="quan"/>
+                            <p:inputText id="quan" />
+                            <p:message for="quan"/>
+
+                            <p:commandButton value="Save"/>
+
+
+
+
+                        </h:panelGrid>
+                        <h:panelGrid columns="1">
+                            <p:dataTable id="logOfApproval" var="papprv_rpt"
+                                         value="#{payreportX.listPaymentReportXModel}"
+                                         paginatorTemplate="{CurrentPageReport}  
+                                         {FirstPageLink} {PreviousPageLink} 
+                                         {PageLinks} {NextPageLink} {LastPageLink} "
+                                         paginator="true" style="margin-bottom:20px">
+
+
+                                <p:column>
+
+                                    <f:facet name="header">
+                                        <h:outputText value="First Name"/>
+                                    </f:facet>
+
+                                    <h:outputText value="#{papprv_rpt.ref_id}"/>
+
+                                </p:column>
+
+                                <p:column>
+
+                                    <f:facet name="header">
+                                        <h:outputText value="Last Name"/>
+                                    </f:facet>
+
+                                    <h:outputText value="#{papprv_rpt.name_of_customer}"/>
+
+                                </p:column>
+
+                                <p:column>
+
+                                    <f:facet name="header">
+                                        <h:outputText value="User Name"/>
+                                    </f:facet>
+
+                                    <h:outputText value="#{papprv_rpt.districtCadastralZone}"/>
+
+                                </p:column>
+
+                                <p:column>
+
+                                    <f:facet name="header">
+                                        <h:outputText value="Can Add Invoice"/>
+                                    </f:facet>
+
+                                    <h:outputText value="#{papprv_rpt.name_of_customer}"/>
+
+                                </p:column>
+                                <p:column>
+
+                                    <f:facet name="header">
+                                        <h:outputText value="Can Print Invoice"/>
+                                    </f:facet>
+
+                                    <h:outputText value="#{papprv_rpt.name_of_customer}"/>
+
+                                </p:column>
+                                <p:column>
+
+                                    <f:facet name="header">
+                                        <h:outputText value="Can Print Invoice"/>
+                                    </f:facet>
+
+                                    <h:outputText value="#{papprv_rpt.name_of_customer}"/>
+
+                                </p:column>
+
+
+
+
+
+                            </p:dataTable> 
+                        </h:panelGrid>
+
+                    </p:panel>
+
+                </p:tab>
+                <p:tab title="Manage Category">
+                    <p:outputLabel value="Select Category: " for="dd"/>
+                    <p:autoComplete id="dd" dropdown="true"  emptyMessage="no record found" required="true" requiredMessage="please eneter category" value="#{ivt.inventRole.inventory_name}" completeMethod="#{ivt.inventoryList()}" />
+                    <p:commandButton value="Add Item" style="margin-left: 30px;" actionListener="#{ivt.makePanelVisible}" process="@this dd"/>
+                    <h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" title="Add Item">
+
+                        <img src="../../images/plus.png" alt="Add Item" title="Add Item" style=" width: 10px; height: 10px;"/>
+                    </h:outputLink>
+                    <p:message for="dd"></p:message>
+                </p:tab>
+
+            </p:tabView>
+
+
+        </p:panel>
+
+
+        <p:dialog header="Add Item" widgetVar="dlg" resizable="false">
+            <h:panelGrid columns="2" cellpadding="5">
+                <h:outputLabel for="username" value="Category: " />
+                <p:inputText id="username" value="#{ivt.tablename}" required="true" label="username" />
+
+                <h:outputLabel for="area" value="Description: " />
+                <p:inputTextarea id="area" value="#{ivt.desciption}" required="true" style="width: 200px; height: 100px;"></p:inputTextarea>
+
+
+                <f:facet name="footer">
+                    <p:commandButton value="Save" process="@this username,area" actionListener="#{ivt.insert}"
+                                     oncomplete="handleLoginRequest(xhr, status, args)" />
+                </f:facet>  
+            </h:panelGrid>
+        </p:dialog>
+
+
+        <script type="text/javascript">
+            function handleLoginRequest(xhr, status, args) {
+                if (args.validationFailed || !args.loggedIn) {
+                    PF('dlg').jq.effect("shake", {times: 5}, 100);
+                } else {
+                    PF('dlg').hide();
+                    $('#loginLink').fadeOut();
+                }
+            }
+        </script>
+    </h:body>
+</html>
+
