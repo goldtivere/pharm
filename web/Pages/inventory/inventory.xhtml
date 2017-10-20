@@ -57,7 +57,7 @@
                             <p:inputText id="pnum" required="true" value="#{bank.vendor_phone}" requiredMessage="Phone number required" />
                             <p:message for="pnum"/>
 
-                            <p:commandButton value="save" process="@this vname,bank,anum,adress,email,pnum" update=":templateForm:growl,singleTB,ven" ajax="true" actionListener="#{bank.insertData}" />
+                            <p:commandButton value="save" process="@this vname,bank,anum,adress,email,pnum" update=":templateForm:growl,singleTB,ven" actionListener="#{bank.insertData}" />
 
                         </h:panelGrid>
                         <h:panelGrid columns="1" id="an">  
@@ -69,10 +69,13 @@
                                 <p:commandButton value="Search"/>
                             </p:outputPanel>
 
+
                             <p:dataTable var="ven_tab" id="singleTB"
                                          value="#{bank.vendorList}" 
-                                         rows="10"
-                                         editable="true"
+                                         rowKey="#{ven_tab.id}"
+                                         selection="#{bank.selectedList}" selectionMode="single"
+                                         rows="10"                                        
+                                         editable="true"                                         
                                          paginatorTemplate="{CurrentPageReport}  
                                          {FirstPageLink} {PreviousPageLink} 
                                          {PageLinks} {NextPageLink} {LastPageLink} "
@@ -81,6 +84,7 @@
 
                                 <p:ajax event="rowEdit" listener="#{bank.onRowEdit}" update=":templateForm:growl" />
                                 <p:ajax event="rowEditCancel" listener="#{bank.onRowCancel}" update=":templateForm:growl" />
+
                                 <p:column>
                                     <f:facet name="header">
                                         <h:outputText value="Vendor Id"/>
@@ -177,11 +181,39 @@
 
 
                                 </p:column>
+
                                 <p:column style="width:32px">
                                     <p:rowEditor   />
                                 </p:column>
                             </p:dataTable> 
+
+                            <h3>Export Page Data Only</h3>
+                            <h:commandLink>
+                                <p:graphicImage value="/images/excel.png" />
+                                <p:dataExporter type="xls" target="singleTB" fileName="report" pageOnly="true"/>
+                            </h:commandLink>
+
+                            <h:commandLink>
+                                <p:graphicImage value="/images/pdf.png" />
+                                <p:dataExporter type="pdf" target="singleTB" fileName="report" pageOnly="true" />
+                            </h:commandLink>
+
+                            <h:commandLink>
+                                <p:graphicImage value="/images/csv.png" />
+                                <p:dataExporter type="csv" target="singleTB" fileName="report" pageOnly="true" />
+                            </h:commandLink>
+
+                            <h:commandLink >
+                                <p:graphicImage value="/images/xml.png" />
+                                <p:dataExporter type="xml" target="singleTB" fileName="report" pageOnly="true" />
+                            </h:commandLink>
+
+                            <p:contextMenu for="singleTB" rendered="#{bank.status}" >
+                                <p:menuitem value="Delete" process="@this singleTB" update=":templateForm:growl,singleTB" icon="ui-icon-close" actionListener="#{bank.deleteCar}"/>
+                            </p:contextMenu>
+
                         </h:panelGrid>
+
                     </p:panel> 
                 </p:tab>
                 <p:tab title="Register Item">
