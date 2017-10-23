@@ -57,7 +57,7 @@
                             <p:inputText id="pnum" required="true" value="#{bank.vendor_phone}" requiredMessage="Phone number required" />
                             <p:message for="pnum"/>
 
-                            <p:commandButton value="save" process="@this vname,bank,anum,adress,email,pnum" update=":templateForm:growl,singleTB,ven" actionListener="#{bank.insertData}" />
+                            <p:commandButton value="save" process="@this vname,bank,anum,adress,email,pnum" update="singleTB,:templateForm:growl,ven" actionListener="#{bank.insertData}" />
 
                         </h:panelGrid>
                         <h:panelGrid columns="1" id="an">  
@@ -164,103 +164,94 @@
                                                                itemValue="#{singlevalue.bankName}"/>
                                             </p:selectOneMenu></f:facet>
                                     </p:cellEditor>
-
-
-
                                 </p:column>
                                 <p:column>
-
                                     <f:facet name="header">
                                         <h:outputText value="Vendor Account Number"/>
                                     </f:facet>
-
-                                    <p:cellEditor>
+                                    <p:cellEditor >
                                         <f:facet name="output"> <h:outputText value="#{ven_tab.vendorAcct}"/></f:facet>
                                         <f:facet name="input"><p:inputText required="true" value="#{ven_tab.vendorAcct}" requiredMessage="Account is required" style="width:96%"/></f:facet>
                                     </p:cellEditor> 
-
-
+                                </p:column>
+                                <p:column style="width:32px" exportable="false">
+                                    <p:rowEditor />
                                 </p:column>
 
-                                <p:column style="width:32px">
-                                    <p:rowEditor   />
-                                </p:column>
+
                             </p:dataTable> 
-
-                            <h3>Export Page Data Only</h3>
-                            <h:commandLink>
-                                <p:graphicImage value="/images/excel.png" />
-                                <p:dataExporter type="xls" target="singleTB" fileName="report" pageOnly="true"/>
-                            </h:commandLink>
-
-                            <h:commandLink>
-                                <p:graphicImage value="/images/pdf.png" />
-                                <p:dataExporter type="pdf" target="singleTB" fileName="report" pageOnly="true" />
-                            </h:commandLink>
-
-                            <h:commandLink>
-                                <p:graphicImage value="/images/csv.png" />
-                                <p:dataExporter type="csv" target="singleTB" fileName="report" pageOnly="true" />
-                            </h:commandLink>
-
-                            <h:commandLink >
-                                <p:graphicImage value="/images/xml.png" />
-                                <p:dataExporter type="xml" target="singleTB" fileName="report" pageOnly="true" />
-                            </h:commandLink>
-
                             <p:contextMenu for="singleTB" rendered="#{bank.status}" >
                                 <p:menuitem value="Delete" process="@this singleTB" update=":templateForm:growl,singleTB" icon="ui-icon-close" actionListener="#{bank.deleteCar}"/>
                             </p:contextMenu>
+                            <p:panel style="margin-top:-50px; float: right;">
+                                <h3>Export table Data Only</h3>
 
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/excel.png" />
+                                    <p:dataExporter type="xls" target="singleTB " fileName="report" pageOnly="true"/>
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/pdf.png" />
+                                    <p:dataExporter type="pdf" target="singleTB" fileName="report" pageOnly="true" />
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/csv.png" />
+                                    <p:dataExporter type="csv" target="singleTB" fileName="report" pageOnly="true" />
+                                </h:commandLink>
+
+                                <h:commandLink immediate="true">
+                                    <p:graphicImage value="/images/xml.png" />
+                                    <p:dataExporter type="xml" target="singleTB" fileName="report" pageOnly="true" />
+                                </h:commandLink>
+                            </p:panel>
                         </h:panelGrid>
 
                     </p:panel> 
                 </p:tab>
-                <p:tab title="Register Item">
-                    <h:panelGrid columns="3">
-                        <p:outputLabel value="Item Name: " for="venName"/>
-                        <p:inputText id="venName" />
-                        <p:message for="venName"/>
 
-                        <p:outputLabel value="Category: " for="cgory"/>
-                        <p:autoComplete id="cgory" dropdown="true"  emptyMessage="no record found" required="true" requiredMessage="please eneter category" value="#{ivt.inventRole.inventory_name}" completeMethod="#{ivt.inventoryList()}" />
-                        <p:message for="cgory"/>
+                <p:tab title="Receive Item">
 
-                        <p:outputLabel value="Description: " for="des"/>
-                        <p:inputText id="des" />
-                        <p:message for="des"/>
-                    </h:panelGrid>
-                </p:tab>
 
-                <p:tab title="Add Item">
+                    <p:message for="dd"></p:message>
+
                     <p:panel id="inventDetails" header="Inventory Details" style="margin-left: 20px; margin-top: 20px; height: 400px;" >
                         <h:panelGrid columns="3" style="float: left;">
-                            <p:outputLabel value="Vendor ID: " for="vendor"/>
-                            <p:inputText id="vendor" />
+                            <p:outputLabel value="Vendor Id: " for="vendor" />
+                            <p:autoComplete id="vendor" emptyMessage="no record found" required="true" requiredMessage="Vendor is required" dropdown="true" value="#{ivt.vendorId}" completeMethod="#{ivt.vendorTable()}" />                        
                             <p:message for="vendor"/>
 
                             <p:outputLabel value="Item: " for="item"/>
-                            <p:inputText id="item" />
+                            <p:inputText id="item" value="#{ivt.item}"
+                                         required="true"
+                                         requiredMessage="Item is required"/>
                             <p:message for="item"/>
 
-                            <p:outputLabel value="Description: " for="describe"/>
-                            <p:inputText id="describe" />
-                            <p:message for="describe"/>
+                            <p:outputLabel value="Category: " for="dd"/>
+                            <p:autoComplete id="dd" dropdown="true"  emptyMessage="no record found" required="true" requiredMessage="please eneter category" value="#{ivt.category}" completeMethod="#{ivt.inventoryList()}" />
+                            <h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" title="Add Item">
 
+                                <img src="../../images/plus.png" alt="Add Item" title="Add Item" style=" width: 10px; height: 10px;"/>
+                            </h:outputLink>
                             <p:outputLabel value="invoice Id: " for="inId"/>
-                            <p:inputText id="inId" />
+                            <p:inputText id="inId" value="#{ivt.invoiceId}"
+                                         required="true"
+                                         requiredMessage="Invoice Id is required"/>
                             <p:message for="inId"/>
 
                             <p:outputLabel value="Amount: " for="amount"/>
-                            <p:inputText id="amount" />
+                            <p:inputText id="amount" value="#{ivt.amount}" required="true"
+                                         requiredMessage="Amount is required" />
                             <p:message for="amount"/>
 
                             <p:outputLabel value="Unit Price: " for="unit"/>
-                            <p:inputText id="unit" />
+                            <p:inputText id="unit" value="#{ivt.unitprice}" required="true"
+                                         requiredMessage="Unit Price is required"/>
                             <p:message for="unit"/>
 
                             <p:outputLabel value="Quantity: " for="quan"/>
-                            <p:inputText id="quan" />
+                            <p:inputText id="quan" value="#{ivt.quantity}" required="true" requiredMessage="Quantity is required" />
                             <p:message for="quan"/>
 
                             <p:commandButton value="Save"/>
@@ -344,18 +335,25 @@
                         </h:panelGrid>
 
                     </p:panel>
-
                 </p:tab>
-                <p:tab title="Manage Category">
-                    <p:outputLabel value="Select Category: " for="dd"/>
-                    <p:autoComplete id="dd" dropdown="true"  emptyMessage="no record found" required="true" requiredMessage="please eneter category" value="#{ivt.inventRole.inventory_name}" completeMethod="#{ivt.inventoryList()}" />
-                    <p:commandButton value="Add Item" style="margin-left: 30px;" actionListener="#{ivt.makePanelVisible}" process="@this dd"/>
-                    <h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" title="Add Item">
 
-                        <img src="../../images/plus.png" alt="Add Item" title="Add Item" style=" width: 10px; height: 10px;"/>
-                    </h:outputLink>
-                    <p:message for="dd"></p:message>
+                <p:tab title="Register Item">
+                    <h:panelGrid columns="3">
+                        <p:outputLabel value="Item Name: " for="venName"/>
+                        <p:inputText id="venName" />
+                        <p:message for="venName"/>
+
+                        <p:outputLabel value="Category: " for="cgory"/>
+                        <p:autoComplete id="cgory" dropdown="true"  emptyMessage="no record found" required="true" requiredMessage="please eneter category" value="#{ivt.inventRole.inventory_name}" completeMethod="#{ivt.inventoryList()}" />
+                        <p:message for="cgory"/>
+
+                        <p:outputLabel value="Description: " for="des"/>
+                        <p:inputText id="des" />
+                        <p:message for="des"/>
+                    </h:panelGrid>
                 </p:tab>
+
+
 
             </p:tabView>
 

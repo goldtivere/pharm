@@ -31,8 +31,81 @@ public class AddInventory {
     private String tablename;
     private String desciption;
     private InventoryModel inventRole = new InventoryModel();
+    private TableModel tabModel=new TableModel();
     private boolean makevisible;
-   
+    private String vendorId;
+    private String item;
+    private String category;
+    private String invoiceId;
+    private double amount;
+    private double unitprice;
+    private double quantity;
+
+    public String getVendorId() {
+        return vendorId;
+    }
+
+    public void setVendorId(String vendorId) {
+        this.vendorId = vendorId;
+    }
+
+    public String getItem() {
+        return item;
+    }
+
+    public void setItem(String item) {
+        this.item = item;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getInvoiceId() {
+        return invoiceId;
+    }
+
+    public void setInvoiceId(String invoiceId) {
+        this.invoiceId = invoiceId;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public double getUnitprice() {
+        return unitprice;
+    }
+
+    public void setUnitprice(double unitprice) {
+        this.unitprice = unitprice;
+    }
+
+    public double getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(double quantity) {
+        this.quantity = quantity;
+    }
+    
+
+    public TableModel getTabModel() {
+        return tabModel;
+    }
+
+    public void setTabModel(TableModel tabModel) {
+        this.tabModel = tabModel;
+    }
+
     public boolean isMakevisible() {
         return makevisible;
     }
@@ -40,20 +113,60 @@ public class AddInventory {
     public void setMakevisible(boolean makevisible) {
         this.makevisible = makevisible;
     }
-    
-    @PostConstruct
-    public void init(){
-        setMakevisible(false);
-       
-      
-    }
 
+   
     public InventoryModel getInventRole() {
         return inventRole;
     }
 
     public void setInventRole(InventoryModel inventRole) {
         this.inventRole = inventRole;
+    }
+
+    public List<String> vendorTable() throws Exception {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT * FROM vendor_table where isdeleted=?";
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, "true");
+            rs = pstmt.executeQuery();
+            //
+            List<String> lst = new ArrayList<>();
+           String vendorName;
+            while (rs.next()) {
+
+                
+       
+                vendorName=rs.getString("vendor_name");
+                
+                lst.add(vendorName);
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
     }
 
     public List<String> inventoryList() throws Exception {
@@ -124,10 +237,10 @@ public class AddInventory {
             return false;
         }
     }
-    
-    public void makePanelVisible(){
+
+    public void makePanelVisible() {
         setMakevisible(true);
-       
+
     }
 
     public void refresh() {
@@ -220,6 +333,10 @@ public class AddInventory {
 
     public void setDesciption(String desciption) {
         this.desciption = desciption;
+    }
+    
+    public void insertItem(){
+        
     }
 
 }

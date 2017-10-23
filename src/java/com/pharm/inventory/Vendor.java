@@ -569,9 +569,10 @@ public class Vendor implements Serializable {
             con = dbConnections.mySqlDBconnection();
 
             // delete registered vendor
-            String Vendelete = "update vendor_table set isDeleted=?";
+            String Vendelete = "update vendor_table set isDeleted=? where vendor_id=?";
             pstmt = con.prepareStatement(Vendelete);
             pstmt.setBoolean(1, true);
+            pstmt.setString(2, selectedList.getVendorId());
             pstmt.executeUpdate();
             vendorList = vendorTable();
             setMessangerOfTruth("Vendor " + selectedList.getVendorId() + " deleted!!");
