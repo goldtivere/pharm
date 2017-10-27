@@ -214,12 +214,12 @@
                 <p:tab title="Receive Item">
 
 
-                    <p:message for="dd"></p:message>
+
 
                     <p:panel id="inventDetails" header="Inventory Details" style="margin-left: 20px; margin-top: 20px; height: 400px;" >
                         <h:panelGrid columns="3" style="float: left;">
                             <p:outputLabel value="Vendor Id: " for="vendor" />
-                            <p:autoComplete id="vendor" emptyMessage="no record found" required="true" requiredMessage="Vendor is required" dropdown="true" value="#{ivt.vendorId}" completeMethod="#{ivt.vendorTable()}" />                        
+                            <p:autoComplete id="vendor" maxResults="10"  emptyMessage="no record found" required="true" forceSelection="true" requiredMessage="Vendor ID is required" dropdown="true" value="#{ivt.vendorId}" completeMethod="#{ivt.completVendor}" />                        
                             <p:message for="vendor"/>
 
                             <p:outputLabel value="Item: " for="item"/>
@@ -228,8 +228,15 @@
                                          requiredMessage="Item is required"/>
                             <p:message for="item"/>
 
-                            <p:outputLabel value="Category: " for="dd"/>
-                            <p:autoComplete id="dd" dropdown="true"  emptyMessage="no record found" required="true" requiredMessage="please eneter category" value="#{ivt.category}" completeMethod="#{ivt.inventoryList()}" />
+                            <p:outputLabel value="Type: " for="type"/>
+                            <p:autoComplete id="type" dropdown="true"  emptyMessage="no record found" required="true"  maxResults="10" requiredMessage="please eneter Item" value="#{ivt.type}" completeMethod="#{ivt.completItem}"  />
+                            <h:outputLink value="javascript:void(0)" onclick="PF('dlgs').show();" title="Add Item">
+
+                                <img src="../../images/plus.png" alt="Add Item" title="Add Item" style=" width: 10px; height: 10px;"/>
+                            </h:outputLink>
+
+                            <p:outputLabel value="Category: " for="cat"/>
+                            <p:autoComplete id="cat" dropdown="true"  emptyMessage="no record found" required="true"  maxResults="10" requiredMessage="please eneter category" value="#{ivt.category}"  completeMethod="#{ivt.completOn}"  />
                             <h:outputLink value="javascript:void(0)" onclick="PF('dlg').show();" title="Add Item">
 
                                 <img src="../../images/plus.png" alt="Add Item" title="Add Item" style=" width: 10px; height: 10px;"/>
@@ -241,28 +248,28 @@
                             <p:message for="inId"/>
 
                             <p:outputLabel value="Amount: " for="amount"/>
-                            <p:inputText id="amount" value="#{ivt.amount}" required="true"
-                                         requiredMessage="Amount is required" />
+                            <p:inputNumber id="amount" value="#{ivt.amount}" emptyValue="empty"  required="true"
+                                           requiredMessage="Amount is required" />
                             <p:message for="amount"/>
 
                             <p:outputLabel value="Unit Price: " for="unit"/>
-                            <p:inputText id="unit" value="#{ivt.unitprice}" required="true"
-                                         requiredMessage="Unit Price is required"/>
+                            <p:inputNumber id="unit" value="#{ivt.unitprice}" required="true" emptyValue="empty"
+                                           requiredMessage="Unit Price is required"/>
                             <p:message for="unit"/>
 
                             <p:outputLabel value="Quantity: " for="quan"/>
-                            <p:inputText id="quan" value="#{ivt.quantity}" required="true" requiredMessage="Quantity is required" />
+                            <p:inputNumber id="quan" value="#{ivt.quantity}" required="true"  emptyValue="empty"  requiredMessage="Quantity is required" />
                             <p:message for="quan"/>
 
-                            <p:commandButton value="Save"/>
+                            <p:commandButton value="save" process="@this vendor,item,cat,inId,amount,unit,quan,item,type" update="itemtab,inventDetails,:templateForm:growl" actionListener="#{ivt.insertItem}" />
 
 
 
 
                         </h:panelGrid>
                         <h:panelGrid columns="1">
-                            <p:dataTable id="logOfApproval" var="papprv_rpt"
-                                         value="#{payreportX.listPaymentReportXModel}"
+                            <p:dataTable id="itemtab" var="tab"
+                                         value="#{ivt.itemModel}"
                                          paginatorTemplate="{CurrentPageReport}  
                                          {FirstPageLink} {PreviousPageLink} 
                                          {PageLinks} {NextPageLink} {LastPageLink} "
@@ -272,58 +279,68 @@
                                 <p:column>
 
                                     <f:facet name="header">
-                                        <h:outputText value="First Name"/>
+                                        <h:outputText value="Vendor ID"/>
                                     </f:facet>
 
-                                    <h:outputText value="#{papprv_rpt.ref_id}"/>
+                                    <h:outputText value="#{tab.vendorId}"/>
 
                                 </p:column>
 
                                 <p:column>
 
                                     <f:facet name="header">
-                                        <h:outputText value="Last Name"/>
+                                        <h:outputText value="Item"/>
                                     </f:facet>
 
-                                    <h:outputText value="#{papprv_rpt.name_of_customer}"/>
+                                    <h:outputText value="#{tab.item}"/>
+
+                                </p:column>
+                                
+                                <p:column>
+
+                                    <f:facet name="header">
+                                        <h:outputText value="Item Type"/>
+                                    </f:facet>
+
+                                    <h:outputText value="#{tab.type}"/>
 
                                 </p:column>
 
                                 <p:column>
 
                                     <f:facet name="header">
-                                        <h:outputText value="User Name"/>
+                                        <h:outputText value="Category"/>
                                     </f:facet>
 
-                                    <h:outputText value="#{papprv_rpt.districtCadastralZone}"/>
+                                    <h:outputText value="#{tab.category}"/>
 
                                 </p:column>
 
                                 <p:column>
 
                                     <f:facet name="header">
-                                        <h:outputText value="Can Add Invoice"/>
+                                        <h:outputText value="Amount"/>
                                     </f:facet>
 
-                                    <h:outputText value="#{papprv_rpt.name_of_customer}"/>
+                                    <h:outputText value="#{tab.amount}"/>
 
                                 </p:column>
                                 <p:column>
 
                                     <f:facet name="header">
-                                        <h:outputText value="Can Print Invoice"/>
+                                        <h:outputText value="Unit Price"/>
                                     </f:facet>
 
-                                    <h:outputText value="#{papprv_rpt.name_of_customer}"/>
+                                    <h:outputText value="#{tab.unitprice}"/>
 
                                 </p:column>
                                 <p:column>
 
                                     <f:facet name="header">
-                                        <h:outputText value="Can Print Invoice"/>
+                                        <h:outputText value="Quantity"/>
                                     </f:facet>
 
-                                    <h:outputText value="#{papprv_rpt.name_of_customer}"/>
+                                    <h:outputText value="#{tab.quantity}"/>
 
                                 </p:column>
 
@@ -361,20 +378,37 @@
         </p:panel>
 
 
-        <p:dialog header="Add Item" widgetVar="dlg" resizable="false">
-            <h:panelGrid columns="2" cellpadding="5">
-                <h:outputLabel for="username" value="Category: " />
-                <p:inputText id="username" value="#{ivt.tablename}" required="true" label="username" />
+        <p:dialog header="Add Item" id="pdialog" widgetVar="dlg" resizable="false">
+            <p:panel id="upda">
 
-                <h:outputLabel for="area" value="Description: " />
-                <p:inputTextarea id="area" value="#{ivt.desciption}" required="true" style="width: 200px; height: 100px;"></p:inputTextarea>
+                <h:panelGrid columns="2" cellpadding="5">
+                    <h:outputLabel for="username" value="Category: " />
+                    <p:inputText id="username" value="#{ivt.tablename}" required="true" label="username" />
+
+                    <h:outputLabel for="area" value="Description: " />
+                    <p:inputTextarea id="area" value="#{ivt.desciption}" required="true" style="width: 200px; height: 100px;"></p:inputTextarea>
 
 
-                <f:facet name="footer">
-                    <p:commandButton value="Save" process="@this username,area" actionListener="#{ivt.insert}"
-                                     oncomplete="handleLoginRequest(xhr, status, args)" />
-                </f:facet>  
-            </h:panelGrid>
+                    <f:facet name="footer">
+                        <p:commandButton value="Save" process="@this username,area" update="upda,:templateForm:growl" actionListener="#{ivt.insert}"
+                                         oncomplete="handleLoginRequest(xhr, status, args)" />
+                    </f:facet>  
+                </h:panelGrid>
+            </p:panel>
+        </p:dialog>
+        
+         <p:dialog header="Add Item" id="pdialogs" widgetVar="dlgs" resizable="false">
+            <p:panel id="updas">
+
+                <h:panelGrid columns="2" cellpadding="5">
+                    <h:outputLabel for="it" value="Item Type: " />
+                    <p:inputText id="it" value="#{ivt.itemtype}" required="true" label="username" />
+                    <f:facet name="footer">
+                        <p:commandButton value="Save" process="@this it" update="updas,:templateForm:growl" actionListener="#{ivt.insertItems}"
+                                         oncomplete="handleLoginRequests(xhr, status, args)" />
+                    </f:facet>  
+                </h:panelGrid>
+            </p:panel>
         </p:dialog>
 
 
@@ -385,6 +419,15 @@
                 } else {
                     PF('dlg').hide();
                     $('#loginLink').fadeOut();
+                }
+            }
+            
+             function handleLoginRequests(xhr, status, args) {
+                if (args.validationFailed || !args.loggedIn) {
+                    PF('dlgs').jq.effect("shake", {times: 5}, 100);
+                } else {
+                    PF('dlgs').hide();
+                    $('#loginLinks').fadeOut();
                 }
             }
         </script>

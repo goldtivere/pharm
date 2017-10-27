@@ -17,6 +17,7 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import org.primefaces.context.RequestContext;
@@ -31,15 +32,60 @@ public class AddInventory {
     private String tablename;
     private String desciption;
     private InventoryModel inventRole = new InventoryModel();
-    private TableModel tabModel=new TableModel();
+    private TableModel tabModel = new TableModel();
     private boolean makevisible;
     private String vendorId;
     private String item;
     private String category;
     private String invoiceId;
-    private double amount;
-    private double unitprice;
-    private double quantity;
+    private String amount;
+    private String unitprice;
+    private String quantity;
+    private String messangerOfTruth;
+    private ItemModel itemtable;
+    private String type;
+    private List<ItemModel> itemModel;
+    private String itemtype;
+
+    public String getItemtype() {
+        return itemtype;
+    }
+
+    public void setItemtype(String itemtype) {
+        this.itemtype = itemtype;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public ItemModel getItemtable() {
+        return itemtable;
+    }
+
+    public void setItemtable(ItemModel itemtable) {
+        this.itemtable = itemtable;
+    }
+
+    public List<ItemModel> getItemModel() {
+        return itemModel;
+    }
+
+    public void setItemModel(List<ItemModel> itemModel) {
+        this.itemModel = itemModel;
+    }
+
+    public String getMessangerOfTruth() {
+        return messangerOfTruth;
+    }
+
+    public void setMessangerOfTruth(String messangerOfTruth) {
+        this.messangerOfTruth = messangerOfTruth;
+    }
 
     public String getVendorId() {
         return vendorId;
@@ -73,30 +119,29 @@ public class AddInventory {
         this.invoiceId = invoiceId;
     }
 
-    public double getAmount() {
+    public String getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(String amount) {
         this.amount = amount;
     }
 
-    public double getUnitprice() {
+    public String getUnitprice() {
         return unitprice;
     }
 
-    public void setUnitprice(double unitprice) {
+    public void setUnitprice(String unitprice) {
         this.unitprice = unitprice;
     }
 
-    public double getQuantity() {
+    public String getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(double quantity) {
+    public void setQuantity(String quantity) {
         this.quantity = quantity;
     }
-    
 
     public TableModel getTabModel() {
         return tabModel;
@@ -114,7 +159,18 @@ public class AddInventory {
         this.makevisible = makevisible;
     }
 
-   
+    @PostConstruct
+    public void init() {
+        try {
+            itemModel = ItemTable();
+            setAmount("");
+            setUnitprice("");
+            setQuantity("");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public InventoryModel getInventRole() {
         return inventRole;
     }
@@ -140,13 +196,54 @@ public class AddInventory {
             rs = pstmt.executeQuery();
             //
             List<String> lst = new ArrayList<>();
-           String vendorName;
+            String vendorName;
             while (rs.next()) {
 
-                
-       
-                vendorName=rs.getString("vendor_name");
-                
+                vendorName = rs.getString("vendor_name");
+
+                lst.add(vendorName);
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+    }
+
+    public List<String> vendorItem() throws Exception {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT type FROM vendortype";
+            pstmt = con.prepareStatement(query);
+            rs = pstmt.executeQuery();
+            //
+            List<String> lst = new ArrayList<>();
+            String vendorName;
+            while (rs.next()) {
+
+                vendorName = rs.getString("type");
+
                 lst.add(vendorName);
             }
 
@@ -212,6 +309,60 @@ public class AddInventory {
         }
     }
 
+    public List<String> completVendor(String val) {
+        List<String> com = new ArrayList();
+        try {
+            for (String value : vendorTable()) {
+                if (value.toUpperCase().contains(val.toUpperCase())) {
+                    com.add(value);
+                }
+
+            }
+            return com;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        }
+
+    }
+
+    public List<String> completItem(String val) {
+        List<String> com = new ArrayList();
+        try {
+            for (String value : vendorItem()) {
+                if (value.toUpperCase().contains(val.toUpperCase())) {
+                    com.add(value);
+                }
+
+            }
+            return com;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        }
+
+    }
+
+    public List<String> completOn(String val) {
+        List<String> com = new ArrayList();
+        try {
+            for (String value : inventoryList()) {
+                if (value.toUpperCase().contains(val.toUpperCase())) {
+                    com.add(value);
+                }
+
+            }
+            return com;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        }
+
+    }
+
     public boolean testCategoryExist(String category) {
         DbConnectionX dbConnections = new DbConnectionX();
         Connection con = null;
@@ -244,8 +395,20 @@ public class AddInventory {
     }
 
     public void refresh() {
-        setTablename(null);
-        setDesciption(null);
+        setAmount("");
+        setCategory("");
+        setType("");
+        setInvoiceId("");
+        setVendorId("");
+        setUnitprice("");
+        setQuantity("");
+        setItem("");
+
+    }
+
+    public void refreshDialog() {
+        setTablename("");
+        setDesciption("");
     }
 
     public void insert(ActionEvent event) {
@@ -267,7 +430,7 @@ public class AddInventory {
         try {
 
             con = dbConnections.mySqlDBconnection();
-            String myTableName = "CREATE TABLE " + tableName + " ("
+            String myTableName = "CREATE TABLE " + tableName + "CAT" + " ("
                     + "`Id` INT NOT NULL,"
                     + "`Item` LONGTEXT NULL,"
                     + "`Quantity` INT NULL,"
@@ -300,13 +463,13 @@ public class AddInventory {
 
                 loggedIn = true;
 
-                message = new FacesMessage(FacesMessage.SEVERITY_INFO, tablename, "Category Created");
-                refresh();
+                message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Category Created", "");
+                refreshDialog();
 
             } else {
                 loggedIn = false;
                 message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Category Already Exists", "");
-                refresh();
+                refreshDialog();
             }
 
             FacesContext.getCurrentInstance().addMessage(null, message);
@@ -334,9 +497,286 @@ public class AddInventory {
     public void setDesciption(String desciption) {
         this.desciption = desciption;
     }
-    
-    public void insertItem(){
-        
+
+    //populates table
+    public List<ItemModel> ItemTable() throws Exception {
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+            String query = "SELECT * FROM vendor_item order by id desc";
+            pstmt = con.prepareStatement(query);
+
+            rs = pstmt.executeQuery();
+            //
+            List<ItemModel> lst = new ArrayList<>();
+            while (rs.next()) {
+
+                ItemModel ven = new ItemModel();
+                ven.setId(rs.getInt("id"));
+                ven.setVendorId(rs.getString("vendor_id"));
+                ven.setItem(rs.getString("item"));
+                ven.setAmount(rs.getDouble("amount"));
+                ven.setInvoiceId(rs.getString("invoice_id"));
+                ven.setQuantity(rs.getDouble("quantity"));
+                ven.setCategory(rs.getString("category"));
+                ven.setUnitprice(rs.getDouble("unit_price"));
+                ven.setCreatedBy(rs.getString("createdby"));
+                ven.setDateCreated(rs.getDate("datecreated"));
+                ven.setType(rs.getString("type"));
+                
+
+                lst.add(ven);
+            }
+
+            return lst;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+    }
+
+    public void insertItem() throws Exception {
+
+        FacesContext context = FacesContext.getCurrentInstance();
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        FacesMessage msg;
+        UserDetails userObj = (UserDetails) context.getExternalContext().getSessionMap().get("sessn_nums");
+        String on = String.valueOf(userObj);
+
+        if (userObj == null) {
+            setMessangerOfTruth("Expired Session, please re-login" + on);
+            msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, getMessangerOfTruth(), getMessangerOfTruth());
+            context.addMessage(null, msg);
+        }
+        String createdby = String.valueOf(userObj.getFirst_name() + " " + userObj.getLast_name());
+        String createdId = String.valueOf(userObj.getId());
+        String roleId = String.valueOf(userObj.getRole_id());
+        try {
+            con = dbConnections.mySqlDBconnection();
+            String vendorQ = "select count(*) as vendorQ from vendor_table where vendor_name=? ";
+            pstmt = con.prepareStatement(vendorQ);
+
+            pstmt.setString(1, getVendorId());
+
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+
+                int counts = rs.getInt("vendorQ");
+                if (counts > 0) {
+
+                    String vendorI = "select count(*) as vendorI from inventory_table where inventory_name=? ";
+                    pstmt = con.prepareStatement(vendorI);
+
+                    pstmt.setString(1, getCategory());
+
+                    rs = pstmt.executeQuery();
+
+                    while (rs.next()) {
+                        int coun = rs.getInt("vendorI");
+                        if (coun > 0) {
+
+                            String vendorIs = "select count(*) as vendorIs from vendortype where type=? ";
+                            pstmt = con.prepareStatement(vendorIs);
+                            pstmt.setString(1, getType());
+                            rs = pstmt.executeQuery();
+
+                            while (rs.next()) {
+                                int couns = rs.getInt("vendorIs");
+                                if (couns > 0) {
+
+                                    //test if invoice id exists
+                                    String vencount = "SELECT count(invoice_id) as invoice FROM vendor_item where invoice_id=?";
+                                    pstmt = con.prepareStatement(vencount);
+                                    pstmt.setString(1, getInvoiceId());
+                                    rs = pstmt.executeQuery();
+
+                                    while (rs.next()) {
+                                        int count = rs.getInt("invoice");
+                                        if (count > 0) {
+
+                                            setMessangerOfTruth("Invoice Id already Exists!!");
+                                            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                                            context.addMessage(null, msg);
+
+                                        } else {
+
+                                            String insert = "insert into vendor_item (vendor_id,item,category,invoice_id,amount,unit_price,"
+                                                    + "quantity,createdBy,role,datecreated,type) "
+                                                    + "values(?,?,?,?,?,?,?,?,?,?,?)";
+
+                                            pstmt = con.prepareStatement(insert);
+
+                                            pstmt.setString(1, getVendorId());
+                                            pstmt.setString(2, getItem());
+                                            pstmt.setString(3, getCategory());
+                                            pstmt.setString(4, getInvoiceId());
+                                            pstmt.setDouble(5, Double.parseDouble(getAmount()));
+                                            pstmt.setDouble(6, Double.parseDouble(getUnitprice()));
+                                            pstmt.setDouble(7, Double.parseDouble(getQuantity()));
+                                            pstmt.setString(8, createdby);
+                                            pstmt.setString(9, roleId);
+                                            pstmt.setString(10, DateManipulation.dateAndTime());
+                                            pstmt.setString(11, getType());
+                                            pstmt.executeUpdate();
+
+                                            setMessangerOfTruth("Item Added!!");
+                                            itemModel = ItemTable();
+                                            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                                            context.addMessage(null, msg);
+                                            refresh();
+
+                                        }
+                                    }
+
+                                } else {
+                                    setMessangerOfTruth("Item does not exist!!");
+
+                                    msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                                    context.addMessage(null, msg);
+                                }
+                            }
+
+                        } else {
+                            setMessangerOfTruth("Category does not exist!!");
+
+                            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                            context.addMessage(null, msg);
+                        }
+                    }
+
+                } else {
+                    setMessangerOfTruth("Vendor does not exist!!");
+
+                    msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+                    context.addMessage(null, msg);
+                }
+            }
+        } catch (Exception e) {
+            setMessangerOfTruth("Error!!");
+            msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+            context.addMessage(null, msg);
+            e.printStackTrace();
+
+        } finally {
+
+            if (!(con == null)) {
+                con.close();
+                con = null;
+            }
+            if (!(pstmt == null)) {
+                pstmt.close();
+                pstmt = null;
+            }
+
+        }
+
+    }
+
+    public void inserttype(ActionEvent event) {
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        PreparedStatement pstmts = null;
+        ResultSet rs = null;
+
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        FacesMessage message = null;
+        boolean loggedIn = false;
+
+        String tableName = tablename;
+        tableName = tableName.replaceAll("\\s", "_");
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+
+            UserDetails userObj = (UserDetails) ctx.getExternalContext().getSessionMap().get("sessn_nums");
+
+            String insertTab = "Insert into vendortype (type,createdby,datecreated,roleid) value (?,?,?,?) ";
+            pstmt = con.prepareStatement(insertTab);
+            pstmt.setString(1, getType());
+            pstmt.setString(2, userObj.getFirst_name() + " " + userObj.getLast_name());
+            pstmt.setString(3, DateManipulation.dateAndTime());
+            pstmt.setInt(4, userObj.getId());
+            pstmt.executeUpdate();
+
+            loggedIn = true;
+
+            message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Vendor Item Created", "");
+            refreshDialog();
+
+            FacesContext.getCurrentInstance().addMessage(null, message);
+            context.addCallbackParam("loggedIn", loggedIn);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+
+        }
+    }
+
+    public void insertItems(ActionEvent event) {
+
+        DbConnectionX dbConnections = new DbConnectionX();
+        Connection con = null;
+        PreparedStatement pstmt = null;
+        PreparedStatement pstmts = null;
+        ResultSet rs = null;
+
+        RequestContext context = RequestContext.getCurrentInstance();
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        FacesMessage message = null;
+        boolean loggedIn = false;
+
+        try {
+
+            con = dbConnections.mySqlDBconnection();
+
+            UserDetails userObj = (UserDetails) ctx.getExternalContext().getSessionMap().get("sessn_nums");
+
+            String insertTab = "Insert into vendortype (type,createdby,datecreated,roleid) value (?,?,?,?) ";
+            pstmt = con.prepareStatement(insertTab);
+            pstmt.setString(1, getItemtype());
+            pstmt.setString(2, userObj.getFirst_name() + " " + userObj.getLast_name());
+            pstmt.setString(3, DateManipulation.dateAndTime());
+            pstmt.setInt(4, userObj.getId());
+            pstmt.executeUpdate();
+
+            loggedIn = true;
+
+            message = new FacesMessage(FacesMessage.SEVERITY_INFO, "Item Created", "");
+            setItemtype("");
+
+            FacesContext.getCurrentInstance().addMessage(null, message);
+            context.addCallbackParam("loggedIn", loggedIn);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+
+        }
     }
 
 }
