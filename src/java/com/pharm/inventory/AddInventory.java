@@ -12,7 +12,10 @@ import com.pharm.login.UserDetails;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -46,6 +49,33 @@ public class AddInventory {
     private String type;
     private List<ItemModel> itemModel;
     private String itemtype;
+    private String startDate;
+    private String endDate;
+    private String barcode;
+
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
 
     public String getItemtype() {
         return itemtype;
@@ -530,7 +560,6 @@ public class AddInventory {
                 ven.setCreatedBy(rs.getString("createdby"));
                 ven.setDateCreated(rs.getDate("datecreated"));
                 ven.setType(rs.getString("type"));
-                
 
                 lst.add(ven);
             }
@@ -571,6 +600,7 @@ public class AddInventory {
             msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, getMessangerOfTruth(), getMessangerOfTruth());
             context.addMessage(null, msg);
         }
+
         String createdby = String.valueOf(userObj.getFirst_name() + " " + userObj.getLast_name());
         String createdId = String.valueOf(userObj.getId());
         String roleId = String.valueOf(userObj.getRole_id());
@@ -625,8 +655,8 @@ public class AddInventory {
                                         } else {
 
                                             String insert = "insert into vendor_item (vendor_id,item,category,invoice_id,amount,unit_price,"
-                                                    + "quantity,createdBy,role,datecreated,type) "
-                                                    + "values(?,?,?,?,?,?,?,?,?,?,?)";
+                                                    + "quantity,createdBy,role,datecreated,type,barcode,mndate,exdate) "
+                                                    + "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
                                             pstmt = con.prepareStatement(insert);
 
@@ -641,6 +671,9 @@ public class AddInventory {
                                             pstmt.setString(9, roleId);
                                             pstmt.setString(10, DateManipulation.dateAndTime());
                                             pstmt.setString(11, getType());
+                                            pstmt.setString(12, getBarcode());
+                                            pstmt.setString(13, getStartDate());
+                                            pstmt.setString(14, getEndDate());
                                             pstmt.executeUpdate();
 
                                             setMessangerOfTruth("Item Added!!");
@@ -648,7 +681,6 @@ public class AddInventory {
                                             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
                                             context.addMessage(null, msg);
                                             refresh();
-
                                         }
                                     }
 

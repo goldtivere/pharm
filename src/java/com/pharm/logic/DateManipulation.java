@@ -24,14 +24,13 @@ public class DateManipulation {
         return timeStamp;
 
     }
-    
+
     public static String time() {
 
         String timeStamp = new SimpleDateFormat("HHmmss").format(Calendar.getInstance().getTime());
         return timeStamp;
 
     }
-    
 
     public static String dateAlone() {
 
@@ -59,15 +58,29 @@ public class DateManipulation {
             Period period = Period.between(birthdate, current_date);
             setYear(period.getYears());
             setMonth(period.getMonths());
-            
+
             return true;
 
         } catch (Exception ex) {
-            
+
             return false;
         }
-        
+
     }//end computeAge
+
+    public static Date defineDate(String dateofbirthX) {
+        try {
+
+            
+            Date dob = new Date(dateofbirthX);
+            return dob;
+
+        } catch (Exception ex) {
+
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
     /**
      * @return the year
