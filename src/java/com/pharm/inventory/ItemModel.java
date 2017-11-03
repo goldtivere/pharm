@@ -5,15 +5,14 @@
  */
 package com.pharm.inventory;
 
+import java.io.Serializable;
 import java.util.Date;
-
-
 
 /**
  *
  * @author Gold
  */
-public class ItemModel {
+public class ItemModel implements Serializable {
 
     private int id;
     private String vendorId;
@@ -26,6 +25,33 @@ public class ItemModel {
     private Date dateCreated;
     private String createdBy;
     private String type;
+    private String startDate;
+    private String enddate;
+    private String barcode;
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+    
+    public String getStartDate() {
+        return startDate;
+    }
+
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
+    }
+
+    public String getEnddate() {
+        return enddate;
+    }
+
+    public void setEnddate(String enddate) {
+        this.enddate = enddate;
+    }
 
     public String getType() {
         return type;
@@ -34,7 +60,6 @@ public class ItemModel {
     public void setType(String type) {
         this.type = type;
     }
-    
 
     public String getCreatedBy() {
         return createdBy;
@@ -43,7 +68,6 @@ public class ItemModel {
     public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
-    
 
     public Date getDateCreated() {
         return dateCreated;
@@ -52,7 +76,6 @@ public class ItemModel {
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
     }
-    
 
     public int getId() {
         return id;
@@ -61,7 +84,6 @@ public class ItemModel {
     public void setId(int id) {
         this.id = id;
     }
-    
 
     public String getVendorId() {
         return vendorId;

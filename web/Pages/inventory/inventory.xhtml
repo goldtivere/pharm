@@ -213,11 +213,8 @@
 
                 <p:tab title="Receive Item">
 
-
-
-
-                    <p:panel id="inventDetails" header="Inventory Details" style="margin-left: 20px; margin-top: 20px; height: 400px;" >
-                        <h:panelGrid columns="3" style="float: left;">
+                    <p:panel id="inventDetails" header="Inventory Details" style="margin-left: 20px; margin-top: 20px; height: 600px;" >
+                        <h:panelGrid columns="3">
                             <p:outputLabel value="Vendor Id: " for="vendor" />
                             <p:autoComplete id="vendor" maxResults="10"  emptyMessage="no record found" required="true" forceSelection="true" requiredMessage="Vendor ID is required" dropdown="true" value="#{ivt.vendorId}" completeMethod="#{ivt.completVendor}" />                        
                             <p:message for="vendor"/>
@@ -225,7 +222,9 @@
                             <p:outputLabel value="Item: " for="item"/>
                             <p:inputText id="item" value="#{ivt.item}"
                                          required="true"
-                                         requiredMessage="Item is required"/>
+                                         requiredMessage="Item is required">
+                                <f:ajax listener="#{ivt.onRowSelect}" ></f:ajax>
+                            </p:inputText>
                             <p:message for="item"/>
 
                             <p:outputLabel value="Type: " for="type"/>
@@ -269,103 +268,82 @@
                             <p:message for="code"/>
 
                             <p:outputLabel value="Maufactured Date: " for="startDate"/>
-                            <p:calendar id="startDate" binding="#{startDateComponent}" yearRange="2017:2100"  navigator="true" value="#{ivt.startDate}" pattern="yyyy/MM/dd" required="true" />
+                            <p:calendar id="startDate" binding="#{startDateComponent}" yearRange="2017:2100"  navigator="true" value="#{ivt.startDate}" required="true" />
                             <p:message for="startDate"/>
 
                             <p:outputLabel value="Expiry Date: " for="endDate"/>
-                            <p:calendar id="endDate" value="#{ivt.endDate}" yearRange="2017:2100"  navigator="true" pattern="yyyy/MM/dd" required="true">
+                            <p:calendar id="endDate" value="#{ivt.endDate}" yearRange="2017:2100"  navigator="true" required="true">
                                 <f:validator validatorId="dateRangeValidator" />
                                 <f:attribute name="startDateComponent" value="#{startDateComponent}" />
                             </p:calendar>
                             <p:message for="endDate"/>
 
-                            <p:commandButton value="save" process="@this vendor,item,cat,inId,amount,unit,quan,item,type,code,startDate,endDate" update="itemtab,inventDetails,:templateForm:growl" actionListener="#{ivt.insertItem}" />
+                            <p:commandButton value="save"  process="@this vendor,item,cat,inId,amount,unit,quan,item,type,code,startDate,endDate" update="itemtab,inventDetails,:templateForm:growl" actionListener="#{ivt.insertItem}" />
 
+                            <p:commandButton value="update" process="@this vendor,item,cat,inId,amount,unit,quan,item,type,code,startDate,endDate" update="inventDetails,:templateForm:growl" actionListener="#{ivt.refresh()}" />
 
 
 
                         </h:panelGrid>
                         <h:panelGrid columns="1">
-                            <p:dataTable id="itemtab" var="tab"
+                            <p:dataTable id="itemtab"  var="tab"
                                          value="#{ivt.itemModel}"
+                                         rows="10"
+                                         selectionMode="single"
+                                         rowKey="#{tab.id}"
+                                         selection="#{ivt.itemtable}"
                                          paginatorTemplate="{CurrentPageReport}  
                                          {FirstPageLink} {PreviousPageLink} 
                                          {PageLinks} {NextPageLink} {LastPageLink} "
                                          paginator="true" style="margin-bottom:20px">
+                                <p:ajax event="rowEdit" listener="#{bank.onRowEdit}" update=":templateForm:growl" />
+                                <p:ajax event="rowEditCancel" listener="#{bank.onRowCancel}" update=":templateForm:growl" />
 
-
-                                <p:column>
-
-                                    <f:facet name="header">
-                                        <h:outputText value="Vendor ID"/>
-                                    </f:facet>
-
+                                <p:column headerText="Vendor Id">
                                     <h:outputText value="#{tab.vendorId}"/>
-
                                 </p:column>
 
-                                <p:column>
-
-                                    <f:facet name="header">
-                                        <h:outputText value="Item"/>
-                                    </f:facet>
-
+                                <p:column headerText="Item">
                                     <h:outputText value="#{tab.item}"/>
-
                                 </p:column>
 
-                                <p:column>
-
-                                    <f:facet name="header">
-                                        <h:outputText value="Item Type"/>
-                                    </f:facet>
+                                <p:column headerText="Item Type">
 
                                     <h:outputText value="#{tab.type}"/>
-
                                 </p:column>
 
-                                <p:column>
-
-                                    <f:facet name="header">
-                                        <h:outputText value="Category"/>
-                                    </f:facet>
-
+                                <p:column headerText="Category">
                                     <h:outputText value="#{tab.category}"/>
-
                                 </p:column>
+                                <p:column headerText="Ex.Date">
 
+                                    <h:outputText value="#{tab.startDate}"/>
+                                </p:column>
                                 <p:column>
 
                                     <f:facet name="header">
-                                        <h:outputText value="Amount"/>
+                                        <h:outputText value="Ex. Date"/>
                                     </f:facet>
 
+                                    <h:outputText value="#{tab.enddate}"/>
+
+                                </p:column>
+
+                                <p:column headerText="Amount">
                                     <h:outputText value="#{tab.amount}"/>
-
                                 </p:column>
-                                <p:column>
 
-                                    <f:facet name="header">
-                                        <h:outputText value="Unit Price"/>
-                                    </f:facet>
+                                <p:column headerText="Bar Code">
+                                    <h:outputText value="#{tab.barcode}"/>
+                                </p:column>
 
+                                <p:column headerText="Unit Price">
                                     <h:outputText value="#{tab.unitprice}"/>
-
                                 </p:column>
-                                <p:column>
 
-                                    <f:facet name="header">
-                                        <h:outputText value="Quantity"/>
-                                    </f:facet>
-
+                                <p:column headerText="Quantity">
                                     <h:outputText value="#{tab.quantity}"/>
-
                                 </p:column>
-
-
-
-
-
                             </p:dataTable> 
                         </h:panelGrid>
 

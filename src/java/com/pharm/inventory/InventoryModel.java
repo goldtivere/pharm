@@ -5,13 +5,14 @@
  */
 package com.pharm.inventory;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  *
  * @author Gold
  */
-public class InventoryModel {
+public class InventoryModel implements Serializable {
     
     private String inventory_name;
     private Date date_created;

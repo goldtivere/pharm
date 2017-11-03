@@ -5,11 +5,13 @@
  */
 package com.pharm.inventory;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Gold
  */
-public class BankModel {
+public class BankModel implements Serializable{
     private int id;
     private String bankName;
 

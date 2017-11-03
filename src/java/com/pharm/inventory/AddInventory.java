@@ -9,6 +9,7 @@ import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import com.pharm.dbconn.DbConnectionX;
 import com.pharm.logic.DateManipulation;
 import com.pharm.login.UserDetails;
+import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,17 +21,21 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
 import javax.faces.component.UIInput;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.UnselectEvent;
 
 /**
  *
  * @author Gold
  */
 @ManagedBean(name = "ivt")
-public class AddInventory {
+@ViewScoped
+public class AddInventory implements Serializable {
 
     private String tablename;
     private String desciption;
@@ -49,23 +54,25 @@ public class AddInventory {
     private String type;
     private List<ItemModel> itemModel;
     private String itemtype;
-    private String startDate;
-    private String endDate;
+    private Date startDate;
+    private Date endDate;
     private String barcode;
+    private String strFromDate;
+    private String strToDate;
 
-    public String getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public String getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
@@ -193,6 +200,7 @@ public class AddInventory {
     public void init() {
         try {
             itemModel = ItemTable();
+            itemtable = new ItemModel();
             setAmount("");
             setUnitprice("");
             setQuantity("");
@@ -433,6 +441,9 @@ public class AddInventory {
         setUnitprice("");
         setQuantity("");
         setItem("");
+        setBarcode("");
+        setStartDate(null);
+        setEndDate(null);
 
     }
 
@@ -560,6 +571,9 @@ public class AddInventory {
                 ven.setCreatedBy(rs.getString("createdby"));
                 ven.setDateCreated(rs.getDate("datecreated"));
                 ven.setType(rs.getString("type"));
+                ven.setStartDate(rs.getString("mndate"));
+                ven.setEnddate(rs.getString("exdate"));
+                ven.setBarcode(rs.getString("barcode"));
 
                 lst.add(ven);
             }
@@ -594,7 +608,7 @@ public class AddInventory {
         FacesMessage msg;
         UserDetails userObj = (UserDetails) context.getExternalContext().getSessionMap().get("sessn_nums");
         String on = String.valueOf(userObj);
-
+        SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
         if (userObj == null) {
             setMessangerOfTruth("Expired Session, please re-login" + on);
             msg = new FacesMessage(FacesMessage.SEVERITY_ERROR, getMessangerOfTruth(), getMessangerOfTruth());
@@ -654,6 +668,9 @@ public class AddInventory {
 
                                         } else {
 
+                                            String strFromDate = format.format(getStartDate());
+                                            String strToDate = format.format(getEndDate());
+
                                             String insert = "insert into vendor_item (vendor_id,item,category,invoice_id,amount,unit_price,"
                                                     + "quantity,createdBy,role,datecreated,type,barcode,mndate,exdate) "
                                                     + "values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
@@ -672,8 +689,8 @@ public class AddInventory {
                                             pstmt.setString(10, DateManipulation.dateAndTime());
                                             pstmt.setString(11, getType());
                                             pstmt.setString(12, getBarcode());
-                                            pstmt.setString(13, getStartDate());
-                                            pstmt.setString(14, getEndDate());
+                                            pstmt.setString(13, strFromDate);
+                                            pstmt.setString(14, strToDate);
                                             pstmt.executeUpdate();
 
                                             setMessangerOfTruth("Item Added!!");
@@ -809,6 +826,22 @@ public class AddInventory {
             ex.printStackTrace();
 
         }
+    }
+
+    public void onRowSelect(SelectEvent event) {
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        FacesMessage msg = null;
+        String vendorIds=((ItemModel) event.getObject()).getVendorId();
+                 setMessangerOfTruth("Vendor " + vendorIds + " deleted!!");
+        msg = new FacesMessage(FacesMessage.SEVERITY_INFO, getMessangerOfTruth(), getMessangerOfTruth());
+        ctx.addMessage(null, msg);
+        setItem(vendorIds);
+    }
+
+    public void onRowUnselect(UnselectEvent event) {
+        System.out.println(" Vendor" + ((ItemModel) event.getObject()).getStartDate());
+        FacesMessage msg = new FacesMessage("Car Unselected", ((ItemModel) event.getObject()).getVendorId());
+        FacesContext.getCurrentInstance().addMessage(null, msg);
     }
 
 }

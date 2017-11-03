@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.pharm.inventory;
+package com.pharm.inventory.NumbervValidator;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
@@ -19,7 +19,6 @@ import javax.faces.validator.ValidatorException;
  */
 @FacesValidator("numberValidator")
 public class NumberValidator implements Validator {
-
     @Override
     public void validate(FacesContext context, UIComponent component, Object value) throws ValidatorException {
         if (value == null) {

@@ -5,11 +5,13 @@
  */
 package com.pharm.inventory;
 
+import java.io.Serializable;
+
 /**
  *
  * @author Gold
  */
-public class VendorModel {
+public class VendorModel implements Serializable {
     private int id;
     private String vendor_id;
     private String vendor_name;
